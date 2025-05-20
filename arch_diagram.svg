@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Grid -->
+  <defs>
+    <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#f0f0f0" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+      <rect width="100" height="100" fill="url(#smallGrid)"/>
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+  
+  <!-- Title -->
+  <text x="400" y="30" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold">Google Cloud VPC Network Architecture</text>
+  
+  <!-- mynetwork VPC Network (Blue) -->
+  <rect x="50" y="70" width="700" height="120" rx="5" ry="5" fill="#e1f5fe" stroke="#0288d1" stroke-width="2"/>
+  <text x="400" y="90" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">mynetwork (Custom Mode)</text>
+  
+  <!-- mynetwork subnets -->
+  <rect x="80" y="110" width="300" height="60" rx="5" ry="5" fill="#bbdefb" stroke="#0288d1" stroke-width="1"/>
+  <text x="230" y="130" font-family="Arial" font-size="14" text-anchor="middle">us-central1 subnet (10.128.0.0/20)</text>
+  
+  <rect x="420" y="110" width="300" height="60" rx="5" ry="5" fill="#bbdefb" stroke="#0288d1" stroke-width="1"/>
+  <text x="570" y="130" font-family="Arial" font-size="14" text-anchor="middle">europe-west1 subnet (10.132.0.0/20)</text>
+  
+  <!-- mynetwork VMs -->
+  <rect x="150" y="145" width="120" height="20" rx="3" ry="3" fill="#0288d1" stroke="#01579b" stroke-width="1"/>
+  <text x="210" y="159" font-family="Arial" font-size="12" text-anchor="middle" fill="white">mynet-us-vm</text>
+  
+  <rect x="490" y="145" width="120" height="20" rx="3" ry="3" fill="#0288d1" stroke="#01579b" stroke-width="1"/>
+  <text x="550" y="159" font-family="Arial" font-size="12" text-anchor="middle" fill="white">mynet-eu-vm</text>
+  
+  <!-- managementnet VPC Network (Green) -->
+  <rect x="50" y="210" width="330" height="120" rx="5" ry="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+  <text x="215" y="230" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">managementnet (Custom Mode)</text>
+  
+  <!-- managementnet subnet -->
+  <rect x="80" y="250" width="270" height="60" rx="5" ry="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="1"/>
+  <text x="215" y="270" font-family="Arial" font-size="14" text-anchor="middle">managementsubnet-us (10.240.0.0/20)</text>
+  
+  <!-- managementnet VM -->
+  <rect x="150" y="285" width="150" height="20" rx="3" ry="3" fill="#388e3c" stroke="#1b5e20" stroke-width="1"/>
+  <text x="225" y="299" font-family="Arial" font-size="12" text-anchor="middle" fill="white">managementnet-us-vm</text>
+  
+  <!-- privatenet VPC Network (Orange) -->
+  <rect x="420" y="210" width="330" height="200" rx="5" ry="5" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+  <text x="585" y="230" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">privatenet (Custom Mode)</text>
+  
+  <!-- privatenet subnets -->
+  <rect x="450" y="250" width="270" height="60" rx="5" ry="5" fill="#ffe0b2" stroke="#f57c00" stroke-width="1"/>
+  <text x="585" y="270" font-family="Arial" font-size="14" text-anchor="middle">privatesubnet-us (172.16.0.0/24)</text>
+  
+  <rect x="450" y="330" width="270" height="60" rx="5" ry="5" fill="#ffe0b2" stroke="#f57c00" stroke-width="1"/>
+  <text x="585" y="350" font-family="Arial" font-size="14" text-anchor="middle">privatesubnet-eu (172.20.0.0/20)</text>
+  
+  <!-- privatenet VM -->
+  <rect x="510" y="285" width="150" height="20" rx="3" ry="3" fill="#f57c00" stroke="#e65100" stroke-width="1"/>
+  <text x="585" y="299" font-family="Arial" font-size="12" text-anchor="middle" fill="white">privatenet-us-vm</text>
+  
+  <!-- Firewall Rules -->
+  <rect x="50" y="430" width="700" height="50" rx="5" ry="5" fill="#f5f5f5" stroke="#9e9e9e" stroke-width="2"/>
+  <text x="400" y="450" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Firewall Rules (allow-icmp, allow-ssh, allow-rdp)</text>
+  <text x="400" y="470" font-family="Arial" font-size="12" text-anchor="middle">Each network has its own firewall rules allowing ICMP, SSH (tcp:22), and RDP (tcp:3389)</text>
+  
+  <!-- Internet and Region Lines -->
+  <line x1="210" y1="145" x2="210" y2="285" stroke="#01579b" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="220" y="200" font-family="Arial" font-size="10" text-anchor="start" fill="#01579b">us-central1-a</text>
+  
+  <line x1="550" y1="145" x2="550" y2="285" stroke="#01579b" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="560" y="200" font-family="Arial" font-size="10" text-anchor="start" fill="#01579b">europe-west1-b</text>
+  
+  <!-- Legend -->
+  <rect x="600" y="370" width="150" height="85" rx="3" ry="3" fill="rgba(255,255,255,0.8)" stroke="#9e9e9e" stroke-width="1"/>
+  <text x="675" y="385" font-family="Arial" font-size="12" text-anchor="middle" font-weight="bold">Legend</text>
+  
+  <rect x="610" y="395" width="15" height="10" fill="#e1f5fe" stroke="#0288d1" stroke-width="1"/>
+  <text x="635" y="403" font-family="Arial" font-size="10" text-anchor="start">mynetwork</text>
+  
+  <rect x="610" y="415" width="15" height="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+  <text x="635" y="423" font-family="Arial" font-size="10" text-anchor="start">managementnet</text>
+  
+  <rect x="610" y="435" width="15" height="10" fill="#fff3e0" stroke="#f57c00" stroke-width="1"/>
+  <text x="635" y="443" font-family="Arial" font-size="10" text-anchor="start">privatenet</text>
+</svg>

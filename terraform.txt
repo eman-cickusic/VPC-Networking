@@ -1,0 +1,203 @@
+# Google Cloud VPC Network Lab - Terraform Implementation
+
+# Provider configuration
+provider "google" {
+  # Replace with your project ID
+  # project = "YOUR_PROJECT_ID"
+  region  = "us-central1"
+}
+
+# Variables
+variable "project_id" {
+  description = "The ID of the Google Cloud project"
+  type        = string
+}
+
+variable "credentials_file" {
+  description = "Path to the JSON credentials file"
+  type        = string
+  default     = "credentials.json"
+}
+
+variable "region1" {
+  description = "First region to deploy resources"
+  type        = string
+  default     = "us-central1"
+}
+
+variable "region2" {
+  description = "Second region to deploy resources"
+  type        = string
+  default     = "europe-west1"
+}
+
+variable "zone1" {
+  description = "First zone to deploy resources"
+  type        = string
+  default     = "us-central1-a"
+}
+
+variable "zone2" {
+  description = "Second zone to deploy resources"
+  type        = string
+  default     = "europe-west1-b"
+}
+
+# mynetwork - Custom mode network (converted from auto mode)
+resource "google_compute_network" "mynetwork" {
+  name                    = "mynetwork"
+  auto_create_subnetworks = false
+  description             = "Custom mode VPC network (converted from auto mode)"
+}
+
+# mynetwork subnets
+resource "google_compute_subnetwork" "mynetwork_subnet_us" {
+  name          = "mynetwork-subnet-us"
+  ip_cidr_range = "10.128.0.0/20"
+  region        = var.region1
+  network       = google_compute_network.mynetwork.id
+}
+
+resource "google_compute_subnetwork" "mynetwork_subnet_eu" {
+  name          = "mynetwork-subnet-eu"
+  ip_cidr_range = "10.132.0.0/20"
+  region        = var.region2
+  network       = google_compute_network.mynetwork.id
+}
+
+# managementnet - Custom mode network
+resource "google_compute_network" "managementnet" {
+  name                    = "managementnet"
+  auto_create_subnetworks = false
+  description             = "Management network"
+}
+
+# managementnet subnet
+resource "google_compute_subnetwork" "managementsubnet_us" {
+  name          = "managementsubnet-us"
+  ip_cidr_range = "10.240.0.0/20"
+  region        = var.region1
+  network       = google_compute_network.managementnet.id
+}
+
+# privatenet - Custom mode network
+resource "google_compute_network" "privatenet" {
+  name                    = "privatenet"
+  auto_create_subnetworks = false
+  description             = "Private network"
+}
+
+# privatenet subnets
+resource "google_compute_subnetwork" "privatesubnet_us" {
+  name          = "privatesubnet-us"
+  ip_cidr_range = "172.16.0.0/24"
+  region        = var.region1
+  network       = google_compute_network.privatenet.id
+}
+
+resource "google_compute_subnetwork" "privatesubnet_eu" {
+  name          = "privatesubnet-eu"
+  ip_cidr_range = "172.20.0.0/20"
+  region        = var.region2
+  network       = google_compute_network.privatenet.id
+}
+
+# Firewall rules for mynetwork
+resource "google_compute_firewall" "mynetwork_allow_icmp" {
+  name    = "mynetwork-allow-icmp"
+  network = google_compute_network.mynetwork.id
+
+  allow {
+    protocol = "icmp"
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_firewall" "mynetwork_allow_ssh" {
+  name    = "mynetwork-allow-ssh"
+  network = google_compute_network.mynetwork.id
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_firewall" "mynetwork_allow_rdp" {
+  name    = "mynetwork-allow-rdp"
+  network = google_compute_network.mynetwork.id
+
+  allow {
+    protocol = "tcp"
+    ports    = ["3389"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_firewall" "mynetwork_allow_custom" {
+  name    = "mynetwork-allow-custom"
+  network = google_compute_network.mynetwork.id
+
+  allow {
+    protocol = "all"
+  }
+
+  source_ranges = ["10.128.0.0/9"]
+}
+
+# Firewall rule for managementnet
+resource "google_compute_firewall" "managementnet_allow_icmp_ssh_rdp" {
+  name    = "managementnet-allow-icmp-ssh-rdp"
+  network = google_compute_network.managementnet.id
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22", "3389"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+# Firewall rule for privatenet
+resource "google_compute_firewall" "privatenet_allow_icmp_ssh_rdp" {
+  name    = "privatenet-allow-icmp-ssh-rdp"
+  network = google_compute_network.privatenet.id
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22", "3389"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+# VM instances
+resource "google_compute_instance" "mynet_us_vm" {
+  name         = "mynet-us-vm"
+  zone         = var.zone1
+  machine_type = "e2-micro"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.mynetwork_subnet_us.id
+    access_config {
+      // Ephemeral IP
+    }
+  
